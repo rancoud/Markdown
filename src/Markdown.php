@@ -10,6 +10,9 @@ namespace Rancoud\Markdown;
 class Markdown
 {
     protected $renderText = '';
+    protected $lines = [];
+    protected $countLines = 0;
+    protected $currentIndex = 0;
 
     public function __construct()
     {
@@ -20,10 +23,10 @@ class Markdown
     {
         $this->renderText = "";
 
-        $lines = explode("\r\n", $content);
-        $countLines = count($lines);
-        for ($i = 0; $i < $countLines; $i++) {
-            $this->treatLine($lines[$i]);
+        $this->lines = explode("\r\n", $content);
+        $this->countLines = count($this->lines);
+        for ($this->currentIndex = 0; $this->currentIndex < $this->countLines; $this->currentIndex++) {
+            $this->treatLine($this->lines[$this->currentIndex]);
         }
 
         return $this->renderText;
@@ -31,7 +34,20 @@ class Markdown
 
     protected function treatLine(string $line): void
     {
+        if (!$this->isInCode()) {
+            $line = $this->removeUselessLeadingSpaces($line);
+        }
+
         $this->tokenizer($line);
+    }
+
+    protected function removeUselessLeadingSpaces(string $line): string
+    {
+        if (strspn($line, ' ') < 4) {
+            $line = ltrim($line, ' ');
+        }
+
+        return $line;
     }
 
     protected function tokenizer(string $string)
@@ -48,6 +64,13 @@ class Markdown
                     $str.= $string{$i};
                     break;
             }
+
+
         }
+    }
+
+    protected function isInCode(): bool
+    {
+        return false;
     }
 }
