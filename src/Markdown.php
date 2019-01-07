@@ -14,9 +14,25 @@ class Markdown
     protected $countLines = 0;
     protected $currentIndex = 0;
 
+    protected $depths = [];
+    protected $types = [
+        'block' => [
+            'code',
+            'table',
+            'blockquote'
+        ],
+        'inline' => [
+            'bold',
+            'italic',
+            'strike',
+            'link',
+            'image',
+        ]
+    ];
+
     public function __construct()
     {
-        //
+        $this->setDepths();
     }
 
     public function render(string $content): string
@@ -34,7 +50,7 @@ class Markdown
 
     protected function treatLine(string $line): void
     {
-        if (!$this->isInCode()) {
+        if (!$this->isIn('block', 'code')) {
             $line = $this->removeUselessLeadingSpaces($line);
         }
 
@@ -69,8 +85,39 @@ class Markdown
         }
     }
 
-    protected function isInCode(): bool
+    protected function isIn(string $type, $index): bool
     {
-        return false;
+        return $this->getDepth($type, $index) > 0;
+    }
+
+    protected function getDepth(string $type, string $index): int
+    {
+        return $this->depths[$type][$index];
+    }
+
+    protected function setDepths(): void
+    {
+        foreach ($this->types as $type => $indexes) {
+            foreach ($indexes as $index) {
+                $this->setDepth($type, $index);
+            }
+
+        }
+    }
+
+    protected function setDepth(string $type, string $index): void
+    {
+        $this->depths[$type] = [];
+        $this->depths[$type][$index] = 0;
+    }
+
+    protected function addDepth(string $type, string $index): void
+    {
+        $this->depths[$type][$index]++;
+    }
+
+    protected function subDepth(string $type, string $index): void
+    {
+        $this->depths[$type][$index]--;
     }
 }
