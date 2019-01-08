@@ -105,6 +105,10 @@ class Markdown
                     break;
             }
         }
+
+        if (\mb_strrpos($this->renderText, '  ') === \mb_strlen($this->renderText) - 2) {
+            $this->renderText = \mb_substr($this->renderText, 0, \mb_strlen($this->renderText) - 2) . '<br />';
+        }
     }
 
     // TODO : block level and multiple quotes patterns ```` ````
