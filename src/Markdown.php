@@ -39,6 +39,11 @@ class Markdown
         $this->setDepths();
     }
 
+    public function addExtension(): void
+    {
+        //
+    }
+
     public function render(string $content): string
     {
         $this->renderText = '';
