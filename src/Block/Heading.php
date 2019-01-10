@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Rancoud\Markdown;
+namespace Rancoud\Markdown\Block;
 
+/**
+ * Class Heading
+ *
+ * @package Rancoud\Markdown
+ */
 class Heading implements Block
 {
     protected $headerLevel = 0;
