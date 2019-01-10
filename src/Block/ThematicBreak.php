@@ -39,20 +39,22 @@ class ThematicBreak implements Block
      */
     public static function isMe(string $line): ?Block
     {
+        if (strncmp($line, '    ', 4) === 0) {
+            return null;
+        }
+
+        $line = str_replace(' ', '', $line);
+
         if (!in_array($line[0], static::$authorizedCharacters, true)) {
             return null;
         }
 
-        if ($line === '***') {
-            return new ThematicBreak('*');
-        }
+        $character = $line[0];
 
-        if ($line === '---') {
-            return new ThematicBreak('-');
-        }
+        $uniqueCharacters = count_chars($line, 3);
 
-        if ($line === '___') {
-            return new ThematicBreak('_');
+        if ($uniqueCharacters === $character) {
+            return new ThematicBreak($character);
         }
 
         return null;
