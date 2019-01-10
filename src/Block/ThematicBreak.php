@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Markdown\Block;
 
+use Rancoud\Markdown\Markdown;
 /**
  * Class ThematicBreak
  *
@@ -35,7 +36,7 @@ class ThematicBreak implements Block
     /**
      * @param string $line
      *
-     * @return Block
+     * @return Block|null
      */
     public static function isMe(string $line): ?Block
     {
@@ -61,9 +62,11 @@ class ThematicBreak implements Block
     }
 
     /**
+     * @param Markdown $markdown
+     *
      * @return string
      */
-    public function render(): string
+    public function render(Markdown $markdown): string
     {
         return '<hr />';
     }

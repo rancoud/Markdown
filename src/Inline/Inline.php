@@ -11,6 +11,8 @@ interface Inline
 {
     /**
      * @param string $content
+     *
+     * @return string
      */
-    public static function scanContent(string $content): void;
+    public static function render(string $content): string;
 }

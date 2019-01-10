@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Markdown;
 
+use Rancoud\Markdown\Inline\Emphasis;
 /**
  * Class Markdown.
  */
@@ -33,10 +34,20 @@ class Markdown
             'double_code'
         ]
     ];
+    
+    protected $inlines = [];
 
     public function __construct()
     {
         $this->setDepths();
+        $this->setInlineMethods();
+    }
+    
+    protected function setInlineMethods(): void
+    {
+        $this->inlines = [
+            0 => Emphasis::class
+        ];
     }
 
     public function addExtension(): void
@@ -44,6 +55,15 @@ class Markdown
         //
     }
 
+    public function renderInline(string $content): string
+    {
+        foreach ($this->inlines as $inline) {
+            $content = $inline::render($content);
+        }
+
+        return $content;
+    }
+    
     public function render(string $content): string
     {
         $this->renderText = '';

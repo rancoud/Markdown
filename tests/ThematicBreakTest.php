@@ -6,6 +6,7 @@ namespace Rancoud\Markdown\Test;
 
 use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\ThematicBreak;
+use Rancoud\Markdown\Markdown;
 
 /**
  * Class ThematicBreakTest
@@ -21,6 +22,7 @@ class ThematicBreakTest extends TestCase
      */
     public function testIsMe(string $input, ?string $output, ?string $render)
     {
+        $m = new Markdown();
         $out = ThematicBreak::isMe($input);
 
         if ($output === null) {
@@ -30,7 +32,7 @@ class ThematicBreakTest extends TestCase
         }
 
         if ($render !== null) {
-            static::assertSame($render, $out->render());
+            static::assertSame($render, $out->render($m));
         }
     }
 
