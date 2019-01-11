@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Inline;
 
 /**
- * Class Emphasis
+ * Class Emphasis.
  */
 class Emphasis implements Inline
 {
@@ -16,6 +16,6 @@ class Emphasis implements Inline
      */
     public static function render(string $content): string
     {
-        return preg_replace('/\*([^\*]+)\*/', '<em>$1</em>', $content);
+        return \preg_replace('/\*([^\*]+)\*/', '<em>$1</em>', $content);
     }
 }

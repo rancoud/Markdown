@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Inline;
 
 /**
- * Interface Inline
+ * Interface Inline.
  */
 interface Inline
 {

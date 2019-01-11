@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+
 /**
- * Class ThematicBreak
- *
- * @package Rancoud\Markdown
+ * Class ThematicBreak.
  */
 class ThematicBreak implements Block
 {
@@ -40,22 +39,26 @@ class ThematicBreak implements Block
      */
     public static function isMe(string $line): ?Block
     {
-        if (strncmp($line, '    ', 4) === 0) {
+        if (\strncmp($line, '    ', 4) === 0) {
             return null;
         }
 
-        $line = str_replace(' ', '', $line);
+        $line = \str_replace(' ', '', $line);
 
-        if (!in_array($line[0], static::$authorizedCharacters, true)) {
+        if ($line === '') {
+            return null;
+        }
+
+        if (!\in_array($line[0], static::$authorizedCharacters, true)) {
             return null;
         }
 
         $character = $line[0];
 
-        $uniqueCharacters = count_chars($line, 3);
+        $uniqueCharacters = \count_chars($line, 3);
 
         if ($uniqueCharacters === $character) {
-            return new ThematicBreak($character);
+            return new self($character);
         }
 
         return null;
@@ -69,5 +72,23 @@ class ThematicBreak implements Block
     public function render(Markdown $markdown): string
     {
         return '<hr />';
+    }
+
+    /**
+     * @param Block $block
+     *
+     * @throws \Exception
+     */
+    public function appendBlock(Block $block): void
+    {
+        throw new \Exception('Invalid append block');
+    }
+
+    /**
+     * @return string
+     */
+    public function getLine(): ?string
+    {
+        return null;
     }
 }

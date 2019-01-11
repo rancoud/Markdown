@@ -7,9 +7,7 @@ namespace Rancoud\Markdown\Block;
 use Rancoud\Markdown\Markdown;
 
 /**
- * Class Heading
- *
- * @package Rancoud\Markdown
+ * Class Heading.
  */
 class Heading implements Block
 {
@@ -46,11 +44,11 @@ class Heading implements Block
         $title = null;
         $headerLevelFound = 0;
 
-        if (strncmp($line, '    ', 4) === 0) {
+        if (\strncmp($line, '    ', 4) === 0) {
             return null;
         }
 
-        $line = trim($line);
+        $line = \trim($line);
 
         for ($headerLevel = 6; $headerLevel > 0; --$headerLevel) {
             $headerSigns = \str_repeat('#', $headerLevel);
@@ -59,13 +57,14 @@ class Heading implements Block
                 $headerLevelFound = $headerLevel;
                 break;
             } elseif ($headerSigns === $line) {
-                return new Heading($headerLevel, '');
+                return new self($headerLevel, '');
             }
         }
 
         if ($title !== null) {
-            $title = trim(Heading::detectClosedHeaderSigns($headerLevelFound, $title));
-            return new Heading($headerLevel, $title);
+            $title = \trim(self::detectClosedHeaderSigns($headerLevelFound, $title));
+
+            return new self($headerLevel, $title);
         }
 
         return null;
@@ -79,6 +78,7 @@ class Heading implements Block
     public function render(Markdown $markdown): string
     {
         $title = $markdown->renderInline($this->title);
+
         return '<h' . $this->headerLevel . '>' . $title . '</h' . $this->headerLevel . '>';
     }
 
@@ -90,30 +90,48 @@ class Heading implements Block
      */
     protected static function detectClosedHeaderSigns(int $headerLevelFound, string $title): string
     {
-        if ($headerLevelFound === 0 || mb_substr($title, \mb_strlen($title) - 1, 1) !== '#') {
+        if ($headerLevelFound === 0 || \mb_substr($title, \mb_strlen($title) - 1, 1) !== '#') {
             return $title;
         }
 
-        $reverseTitle = strrev($title);
-        $positionFirstSpace = mb_strpos($reverseTitle, ' ');
+        $reverseTitle = \strrev($title);
+        $positionFirstSpace = \mb_strpos($reverseTitle, ' ');
         if ($positionFirstSpace === false) {
-            if (count_chars($title, 3) === '#') {
+            if (\count_chars($title, 3) === '#') {
                 return '';
             }
-            
+
             return $title;
         }
 
-        $closedHeaderSigns = mb_substr($reverseTitle, 0, $positionFirstSpace);
-        $uniqueCharacters = count_chars($closedHeaderSigns, 3);
+        $closedHeaderSigns = \mb_substr($reverseTitle, 0, $positionFirstSpace);
+        $uniqueCharacters = \count_chars($closedHeaderSigns, 3);
         if ($uniqueCharacters === '#') {
-            $title = strrev(mb_substr($reverseTitle, $positionFirstSpace));
+            $title = \strrev(\mb_substr($reverseTitle, $positionFirstSpace));
         } elseif ($uniqueCharacters === '#\\') {
-            $closedHeaderSignsCorrected = str_replace('\\', '', $closedHeaderSigns);
-            $reverseTitle = str_replace($closedHeaderSigns, $closedHeaderSignsCorrected, $reverseTitle);
-            $title = strrev($reverseTitle);
+            $closedHeaderSignsCorrected = \str_replace('\\', '', $closedHeaderSigns);
+            $reverseTitle = \str_replace($closedHeaderSigns, $closedHeaderSignsCorrected, $reverseTitle);
+            $title = \strrev($reverseTitle);
         }
 
         return $title;
+    }
+
+    /**
+     * @param Block $block
+     *
+     * @throws \Exception
+     */
+    public function appendBlock(Block $block): void
+    {
+        throw new \Exception('Invalid append block');
+    }
+
+    /**
+     * @return string
+     */
+    public function getLine(): ?string
+    {
+        return null;
     }
 }

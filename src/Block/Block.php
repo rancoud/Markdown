@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+
 /**
- * Interface Block
- *
- * @package Rancoud\Markdown
+ * Interface Block.
  */
 interface Block
 {
@@ -22,7 +21,7 @@ interface Block
      *
      * @return Block|null
      */
-    public static function isMe(string $line): ?Block;
+    public static function isMe(string $line): ?self;
 
     /**
      * @param Markdown $markdown
@@ -30,4 +29,14 @@ interface Block
      * @return string
      */
     public function render(Markdown $markdown): string;
+
+    /**
+     * @param Block $block
+     */
+    public function appendBlock(self $block): void;
+
+    /**
+     * @return string
+     */
+    public function getLine(): ?string;
 }

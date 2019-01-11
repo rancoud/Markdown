@@ -4,57 +4,197 @@ declare(strict_types=1);
 
 namespace Rancoud\Markdown;
 
+use Rancoud\Markdown\Block\BlankLine;
+use Rancoud\Markdown\Block\Block;
+use Rancoud\Markdown\Block\BlockQuote;
+use Rancoud\Markdown\Block\Heading;
+use Rancoud\Markdown\Block\Paragraph;
+use Rancoud\Markdown\Block\ThematicBreak;
 use Rancoud\Markdown\Inline\Emphasis;
+use Rancoud\Markdown\Inline\Inline;
+
 /**
  * Class Markdown.
  */
 class Markdown
 {
-    protected $renderText = '';
-    protected $lines = [];
-    protected $countLines = 0;
-    protected $currentIndex = 0;
-    protected $countRunes = 0;
-    protected $currentRune = 0;
+    //region Parsing Blocks and Inlines
 
-    protected $depths = [];
-    protected $types = [
-        'block' => [
-            'code',
-            'table',
-            'blockquote'
-        ],
-        'inline' => [
-            'bold',
-            'italic',
-            'strike',
-            'link',
-            'image',
-            'simple_code',
-            'double_code'
-        ]
+    /** @var Block[] */
+    protected $blocks = [
+        0   => BlankLine::class,
+        10  => Heading::class,
+        20  => ThematicBreak::class,
+        30  => BlockQuote::class,
+        999 => Paragraph::class
     ];
-    
-    protected $inlines = [];
 
-    public function __construct()
+    /** @var Inline[] */
+    protected $inlines = [
+        0 => Emphasis::class
+    ];
+
+    //endregion
+
+    //region Outline content
+
+    /** @var Block[] */
+    protected $document = [];
+
+    //endregion
+
+    //region Treatement
+
+    /** @var string[] */
+    protected $lines = [];
+
+    protected $heap = [];
+
+    //endregion
+
+    /**
+     * @param string $content
+     *
+     * @return string
+     */
+    public function render(string $content): string
     {
-        $this->setDepths();
-        $this->setInlineMethods();
-    }
-    
-    protected function setInlineMethods(): void
-    {
-        $this->inlines = [
-            0 => Emphasis::class
-        ];
+        $this->heap = $this->document = [];
+
+        $this->getLines($content);
+        $this->scanLines();
+
+        return $this->renderDocument();
     }
 
-    public function addExtension(): void
+    /**
+     * @param string $content
+     */
+    protected function getLines(string $content): void
     {
-        //
+        $this->lines = \preg_split('/\R/', $content);
+        $countLines = \count($this->lines);
+        if ($countLines === 0) {
+            return;
+        }
+
+        for ($i = 0; $i < $countLines; ++$i) {
+            if (\trim($this->lines[$i]) === '') {
+                \array_shift($this->lines);
+                --$i;
+            } else {
+                break;
+            }
+        }
+
+        $countLines = \count($this->lines);
+        if ($countLines === 0) {
+            return;
+        }
+
+        for ($i = $countLines - 1; $i > 0; --$i) {
+            if (\trim($this->lines[$i]) === '') {
+                \array_pop($this->lines);
+            } else {
+                break;
+            }
+        }
     }
 
+    protected function scanLines(): void
+    {
+        foreach ($this->lines as $line) {
+            $this->scanLine($line);
+        }
+
+        $heapSize = \count($this->heap);
+        if ($heapSize === 1) {
+            $this->document[] = $this->heap[0];
+        } else {
+            $child = \array_pop($this->heap);
+            --$heapSize;
+            do {
+                $parent = \array_pop($this->heap);
+                $parent->appendBlock($child);
+                --$heapSize;
+            } while ($heapSize > 0);
+            $this->document[] = $parent;
+        }
+    }
+
+    /**
+     * @param string $line
+     */
+    protected function scanLine(string $line): void
+    {
+        foreach ($this->blocks as $block) {
+            /** @var ?Block $res */
+            $res = $block::isMe($line);
+            if ($res !== null) {
+                $this->manageHeap($res, $line);
+                if (!$res::isLeaf()) {
+                    $this->scanLine($res->getLine());
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * @param Block  $block
+     * @param string $line
+     */
+    protected function manageHeap(Block $block, string $line): void
+    {
+        if (\count($this->heap) === 0) {
+            $this->heap[] = $block;
+
+            return;
+        }
+
+        \end($this->heap);
+
+        $class = \get_class($block);
+        $end = \key($this->heap);
+        $lastHeapClass = \get_class($this->heap[$end]);
+        if ($class === $lastHeapClass) {
+            if ($block::isLeaf()) {
+                $this->heap[$end]->appendContent($line);
+            } else {
+                $this->heap[] = $block;
+            }
+
+            return;
+        }
+
+        if (\get_class($block) === BlankLine::class) {
+            $this->document[] = \array_pop($this->heap);
+
+            return;
+        }
+
+        $this->heap[] = $block;
+    }
+
+    /**
+     * @return string
+     */
+    protected function renderDocument(): string
+    {
+        $content = [];
+
+        foreach ($this->document as $block) {
+            $content[] = $block->render($this);
+        }
+
+        return \implode("\r\n", $content);
+    }
+
+    /**
+     * @param string $content
+     *
+     * @return string
+     */
     public function renderInline(string $content): string
     {
         foreach ($this->inlines as $inline) {
@@ -63,8 +203,35 @@ class Markdown
 
         return $content;
     }
-    
-    public function render(string $content): string
+
+    /* protected $renderText = '';
+     protected $lines = [];
+     protected $countLines = 0;
+     protected $currentIndex = 0;
+     protected $countRunes = 0;
+     protected $currentRune = 0;
+
+     protected $depths = [];
+     protected $types = [
+         'block' => [
+             'code',
+             'table',
+             'blockquote'
+         ],
+         'inline' => [
+             'bold',
+             'italic',
+             'strike',
+             'link',
+             'image',
+             'simple_code',
+             'double_code'
+         ]
+     ];
+
+     protected $inlines = [];*/
+
+    public function render_old(string $content): string
     {
         $this->renderText = '';
 
