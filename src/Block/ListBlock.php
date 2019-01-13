@@ -7,29 +7,18 @@ namespace Rancoud\Markdown\Block;
 use Rancoud\Markdown\Markdown;
 
 /**
- * Class IndentedCode.
+ * Class ListBlock.
  */
-class IndentedCode implements Block
+class ListBlock implements Block
 {
-    protected $parent = null;
-    protected $content = [];
-
-    /**
-     * IndentedCode constructor.
-     *
-     * @param string $content
-     */
-    public function __construct(string $content)
-    {
-        $this->content[] = $content;
-    }
+    protected $blocks = [];
 
     /**
      * @return bool
      */
     public function isContainer(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -39,11 +28,7 @@ class IndentedCode implements Block
      */
     public static function isMe(string $line): ?Block
     {
-        if (\strncmp($line, '    ', 4) === 0) {
-            return new self(\mb_substr($line, 4) . "\r\n");
-        }
-
-        return null;
+        return (\trim($line) === '-') ? new self() : null;
     }
 
     /**
@@ -53,10 +38,7 @@ class IndentedCode implements Block
      */
     public function render(Markdown $markdown): string
     {
-        $content = \implode("\r\n", $this->content);
-        $content = \htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
-
-        return '<pre><code>' . $content . '</code></pre>';
+        return '';
     }
 
     /**
@@ -66,7 +48,7 @@ class IndentedCode implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new \Exception('Invalid append block: ' . $block);
+        $this->blocks[] = $block;
     }
 
     /**
@@ -78,19 +60,18 @@ class IndentedCode implements Block
     }
 
     /**
-     * @return Block|null
-     */
-    public function getParent(): ?Block
-    {
-        return $this->parent;
-    }
-
-    /**
      * @param Block $block
      */
     public function setParent(Block $block): void
     {
-        $this->parent = $block;
+    }
+
+    /**
+     * @return Block|null
+     */
+    public function getParent(): ?Block
+    {
+        return null;
     }
 
     /**
@@ -108,7 +89,7 @@ class IndentedCode implements Block
      */
     public function canAppend(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -118,6 +99,9 @@ class IndentedCode implements Block
      */
     public function appendContent(string $content): void
     {
-        $this->content[] = $content;
+        if (\trim($content) === '') {
+            return;
+        }
+        throw new \Exception('Invalid append content: ' . $content);
     }
 }

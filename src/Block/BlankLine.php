@@ -60,15 +60,14 @@ class BlankLine implements Block
     /**
      * @param Block $block
      */
-    public function setParent(Block $block) : void
+    public function setParent(Block $block): void
     {
-        return;
     }
 
     /**
      * @return Block|null
      */
-    public function getParent() : ?Block
+    public function getParent(): ?Block
     {
         return null;
     }
@@ -78,7 +77,7 @@ class BlankLine implements Block
      *
      * @return bool
      */
-    public function canClose(Block $block) : bool
+    public function canClose(Block $block): bool
     {
         return true;
     }
@@ -98,7 +97,7 @@ class BlankLine implements Block
      */
     public function appendContent(string $content): void
     {
-        if (trim($content) === '') {
+        if (\trim($content) === '') {
             return;
         }
         throw new \Exception('Invalid append content: ' . $content);

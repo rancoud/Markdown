@@ -43,19 +43,19 @@ interface Block
     /**
      * @return Block|null
      */
-    public function getParent(): ?Block;
+    public function getParent(): ?self;
 
     /**
      * @param Block $block
      */
-    public function setParent(Block $block) : void;
+    public function setParent(self $block): void;
 
     /**
      * @param Block $block
      *
      * @return bool
      */
-    public function canClose(Block $block): bool;
+    public function canClose(self $block): bool;
 
     /**
      * @return bool

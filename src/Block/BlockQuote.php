@@ -48,15 +48,15 @@ class BlockQuote implements Block
     public static function isMe(string $line): ?Block
     {
         // TODO: WRONG just for testing
-        if (strncmp('>>>', $line[0], 3) === 0) {
+        if (\strncmp('>>>', $line[0], 3) === 0) {
             return new self(\mb_substr($line, 3), 3);
         }
 
-        if (strncmp('>>', $line[0], 2) === 0) {
+        if (\strncmp('>>', $line[0], 2) === 0) {
             return new self(\mb_substr($line, 2), 2);
         }
 
-        if (strncmp('>', $line[0], 1) === 0) {
+        if (\strncmp('>', $line[0], 1) === 0) {
             return new self(\mb_substr($line, 1), 1);
         }
 
@@ -98,7 +98,7 @@ class BlockQuote implements Block
     /**
      * @return Block|null
      */
-    public function getParent() : ?Block
+    public function getParent(): ?Block
     {
         return $this->parent;
     }
@@ -106,7 +106,7 @@ class BlockQuote implements Block
     /**
      * @param Block $block
      */
-    public function setParent(Block $block) : void
+    public function setParent(Block $block): void
     {
         $this->parent = $block;
     }
@@ -116,7 +116,7 @@ class BlockQuote implements Block
      *
      * @return bool
      */
-    public function canClose(Block $block) : bool
+    public function canClose(Block $block): bool
     {
         return true;
     }

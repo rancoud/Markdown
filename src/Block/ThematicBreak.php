@@ -96,7 +96,7 @@ class ThematicBreak implements Block
     /**
      * @return Block|null
      */
-    public function getParent() : ?Block
+    public function getParent(): ?Block
     {
         return $this->parent;
     }
@@ -104,7 +104,7 @@ class ThematicBreak implements Block
     /**
      * @param Block $block
      */
-    public function setParent(Block $block) : void
+    public function setParent(Block $block): void
     {
         $this->parent = $block;
     }
@@ -114,7 +114,7 @@ class ThematicBreak implements Block
      *
      * @return bool
      */
-    public function canClose(Block $block) : bool
+    public function canClose(Block $block): bool
     {
         return true;
     }

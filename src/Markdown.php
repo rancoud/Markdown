@@ -9,7 +9,9 @@ use Rancoud\Markdown\Block\Block;
 use Rancoud\Markdown\Block\BlockQuote;
 use Rancoud\Markdown\Block\FencedCode;
 use Rancoud\Markdown\Block\Heading;
+use Rancoud\Markdown\Block\Html;
 use Rancoud\Markdown\Block\IndentedCode;
+use Rancoud\Markdown\Block\LinkReferenceDefinition;
 use Rancoud\Markdown\Block\Paragraph;
 use Rancoud\Markdown\Block\ThematicBreak;
 use Rancoud\Markdown\Inline\Emphasis;
@@ -30,6 +32,8 @@ class Markdown
         30  => BlockQuote::class,
         40  => IndentedCode::class,
         50  => FencedCode::class,
+        60  => Html::class,
+        70  => LinkReferenceDefinition::class,
         999 => Paragraph::class
     ];
 
@@ -57,7 +61,7 @@ class Markdown
     //endregion
 
     //region Public methods (render)
-    
+
     /**
      * @param string $content
      *
@@ -72,8 +76,10 @@ class Markdown
 
         return $this->renderDocument();
     }
-    
+
     //endregion
+
+    // region Scan content
 
     /**
      * @param string $content
@@ -132,32 +138,35 @@ class Markdown
         if ($block === null) {
             return;
         }
-        $className = get_class($block);
+        $className = \get_class($block);
         $blockLastHeap = $this->lastHeap();
 
         if ($parent !== null) {
             $block->setParent($parent);
         }
-        
+
         if (!$this->isEmptyHeap()) {
             $oldBlock = $this->getSameBlockLevelInHeap($block, $parent);
             if ($oldBlock && $block->isContainer()) {
                 $this->scanLine($block->getLine(), $oldBlock);
+
                 return;
             }
 
             if ($block->canClose($blockLastHeap)) {
                 $this->popHeap();
-                if (get_class($block) === BlankLine::class && !$this->isEmptyHeap()) {
+                if (\get_class($block) === BlankLine::class && !$this->isEmptyHeap()) {
                     $this->popHeap();
                 }
             }
 
-            if ($blockLastHeap !== null && $className == get_class($blockLastHeap) && $blockLastHeap->getParent() === $block) {
-                if ($blockLastHeap->canAppend()) {
-                    $this->scanLine($block->getLine(), $this->getSameBlockLevelInHeap($block, $parent));
-                } else {
-                    $this->popSameBlockLevelInHeap($block, $parent);
+            if ($blockLastHeap !== null) {
+                if ($className === \get_class($blockLastHeap) && $blockLastHeap->getParent() === $block) {
+                    if ($blockLastHeap->canAppend()) {
+                        $this->scanLine($block->getLine(), $this->getSameBlockLevelInHeap($block, $parent));
+                    } else {
+                        $this->popSameBlockLevelInHeap($block, $parent);
+                    }
                 }
             }
         }
@@ -165,21 +174,13 @@ class Markdown
         if ($block->isContainer()) {
             $this->pushHeap($block);
             $this->scanLine($block->getLine(), $block);
+
             return;
         }
-        /*foreach ($this->blocks as $block) {
-            $res = $block::isMe($line);
-            if ($res !== null) {
-                $this->manageHeap($res, $line);
-                if (!$res::isLeaf()) {
-                    $this->scanLine($res->getLine());
-                }
-                break;
-            }
-        }*/
 
-        if ($blockLastHeap !== null && $className == get_class($blockLastHeap)) {
+        if ($blockLastHeap !== null && $className === \get_class($blockLastHeap)) {
             $blockLastHeap->appendContent($line);
+
             return;
         }
 
@@ -199,12 +200,14 @@ class Markdown
                 return $res;
             }
         }
-        
+
         return null;
     }
 
+    // endregion
+
     //region Heap Management
-    
+
     /**
      * @param Block $element
      */
@@ -216,12 +219,12 @@ class Markdown
     protected function popHeap(): void
     {
         /** @var Block $element */
-        $element = array_pop($this->heap);
+        $element = \array_pop($this->heap);
         if ($element === false) {
             return;
         }
         if ($element->getParent() !== null) {
-            end($this->heap)->appendBlock($element);
+            \end($this->heap)->appendBlock($element);
         } else {
             $this->document[] = $element;
         }
@@ -232,7 +235,7 @@ class Markdown
      */
     protected function lastHeap(): ?Block
     {
-        $block = end($this->heap);
+        $block = \end($this->heap);
 
         return ($block === false) ? null : $block;
     }
@@ -242,15 +245,21 @@ class Markdown
      */
     protected function isEmptyHeap(): bool
     {
-        return count($this->heap) === 0;
+        return \count($this->heap) === 0;
     }
-    
+
+    /**
+     * @param $block
+     * @param $parent
+     *
+     * @return mixed|null
+     */
     protected function getSameBlockLevelInHeap($block, $parent)
     {
-        $p = ($parent === null) ? null : get_class($parent);
+        $p = ($parent === null) ? null : \get_class($parent);
         foreach ($this->heap as $bl) {
-            if (get_class($bl) == get_class($block)) {
-                $pp = ($bl->getParent() === null) ? null : get_class($bl->getParent());
+            if (\get_class($bl) === \get_class($block)) {
+                $pp = ($bl->getParent() === null) ? null : \get_class($bl->getParent());
                 if ($p === $pp) {
                     return $bl;
                 }
@@ -260,13 +269,19 @@ class Markdown
         return null;
     }
 
+    /**
+     * @param $block
+     * @param $parent
+     *
+     * @return mixed
+     */
     protected function popSameBlockLevelInHeap($block, $parent)
     {
-        $p = ($parent === null) ? null : get_class($parent);
+        $p = ($parent === null) ? null : \get_class($parent);
         $limit = null;
         foreach ($this->heap as $bl) {
-            if (get_class($bl) == get_class($block)) {
-                $pp = ($bl->getParent() === null) ? null : get_class($bl->getParent());
+            if (\get_class($bl) === \get_class($block)) {
+                $pp = ($bl->getParent() === null) ? null : \get_class($bl->getParent());
                 if ($p === $pp) {
                     $limit = $bl;
                     break;
@@ -274,22 +289,22 @@ class Markdown
             }
         }
 
-        while (count($this->heap) > 0 || $limit != end($this->heap)) {
-            $element = array_pop($this->heap);
+        while (\count($this->heap) > 0 || $limit !== \end($this->heap)) {
+            $element = \array_pop($this->heap);
             if ($element->getParent() !== null) {
-                end($this->heap)->appendBlock($element);
+                \end($this->heap)->appendBlock($element);
             } else {
                 $this->document[] = $element;
             }
         }
 
-        return end($this->heap);
+        return \end($this->heap);
     }
-    
+
     //endregion
-    
+
     //region Rendering
-    
+
     /**
      * @return string
      */
@@ -317,6 +332,6 @@ class Markdown
 
         return $content;
     }
-    
+
     //endregion
 }

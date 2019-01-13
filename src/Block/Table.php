@@ -7,15 +7,15 @@ namespace Rancoud\Markdown\Block;
 use Rancoud\Markdown\Markdown;
 
 /**
- * Class IndentedCode.
+ * Class Table.
  */
-class IndentedCode implements Block
+class Table implements Block
 {
     protected $parent = null;
     protected $content = [];
 
     /**
-     * IndentedCode constructor.
+     * Paragraph constructor.
      *
      * @param string $content
      */
@@ -39,8 +39,8 @@ class IndentedCode implements Block
      */
     public static function isMe(string $line): ?Block
     {
-        if (\strncmp($line, '    ', 4) === 0) {
-            return new self(\mb_substr($line, 4) . "\r\n");
+        if (\strncmp($line, '|', 1) === 0) {
+            return new self($line);
         }
 
         return null;
@@ -53,10 +53,9 @@ class IndentedCode implements Block
      */
     public function render(Markdown $markdown): string
     {
-        $content = \implode("\r\n", $this->content);
-        $content = \htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
+        $content = $markdown->renderInline(\implode("\r\n", $this->content));
 
-        return '<pre><code>' . $content . '</code></pre>';
+        return '<table>' . $content . '</table>';
     }
 
     /**
@@ -100,7 +99,7 @@ class IndentedCode implements Block
      */
     public function canClose(Block $block): bool
     {
-        return true;
+        return false;
     }
 
     /**

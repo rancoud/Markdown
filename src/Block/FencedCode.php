@@ -40,11 +40,11 @@ class FencedCode implements Block
     public static function isMe(string $line): ?Block
     {
         if (\strncmp($line, '```', 3) === 0) {
-            return new self(mb_substr($line, 4) . "\r\n");
+            return new self(\mb_substr($line, 4) . "\r\n");
         }
 
         if (\strncmp($line, '~~~', 3) === 0) {
-            return new self(mb_substr($line, 4) . "\r\n");
+            return new self(\mb_substr($line, 4) . "\r\n");
         }
 
         return null;
@@ -58,7 +58,7 @@ class FencedCode implements Block
     public function render(Markdown $markdown): string
     {
         $content = \implode("\r\n", $this->content);
-        $content = htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
+        $content = \htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
 
         return '<pre><code>' . $content . '</code></pre>';
     }
@@ -84,7 +84,7 @@ class FencedCode implements Block
     /**
      * @return Block|null
      */
-    public function getParent() : ?Block
+    public function getParent(): ?Block
     {
         return $this->parent;
     }
@@ -92,7 +92,7 @@ class FencedCode implements Block
     /**
      * @param Block $block
      */
-    public function setParent(Block $block) : void
+    public function setParent(Block $block): void
     {
         $this->parent = $block;
     }
@@ -102,7 +102,7 @@ class FencedCode implements Block
      *
      * @return bool
      */
-    public function canClose(Block $block) : bool
+    public function canClose(Block $block): bool
     {
         return true;
     }
