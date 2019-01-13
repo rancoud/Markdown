@@ -11,6 +11,7 @@ use Rancoud\Markdown\Markdown;
  */
 class Paragraph implements Block
 {
+    protected $parent = null;
     protected $content = [];
 
     /**
@@ -26,9 +27,9 @@ class Paragraph implements Block
     /**
      * @return bool
      */
-    public static function isLeaf(): bool
+    public function isContainer(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -54,14 +55,6 @@ class Paragraph implements Block
     }
 
     /**
-     * @param string $line
-     */
-    public function appendContent(string $line): void
-    {
-        $this->content[] = $line;
-    }
-
-    /**
      * @param Block $block
      *
      * @throws \Exception
@@ -77,5 +70,49 @@ class Paragraph implements Block
     public function getLine(): ?string
     {
         return null;
+    }
+
+    /**
+     * @return Block|null
+     */
+    public function getParent() : ?Block
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param Block $block
+     */
+    public function setParent(Block $block) : void
+    {
+        $this->parent = $block;
+    }
+
+    /**
+     * @param Block $block
+     *
+     * @return bool
+     */
+    public function canClose(Block $block) : bool
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canAppend(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param string $content
+     *
+     * @throws \Exception
+     */
+    public function appendContent(string $content): void
+    {
+        $this->content[] = $content;
     }
 }

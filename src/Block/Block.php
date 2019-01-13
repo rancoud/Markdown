@@ -14,7 +14,7 @@ interface Block
     /**
      * @return bool
      */
-    public static function isLeaf(): bool;
+    public function isContainer(): bool;
 
     /**
      * @param string $line
@@ -39,4 +39,31 @@ interface Block
      * @return string
      */
     public function getLine(): ?string;
+
+    /**
+     * @return Block|null
+     */
+    public function getParent(): ?Block;
+
+    /**
+     * @param Block $block
+     */
+    public function setParent(Block $block) : void;
+
+    /**
+     * @param Block $block
+     *
+     * @return bool
+     */
+    public function canClose(Block $block): bool;
+
+    /**
+     * @return bool
+     */
+    public function canAppend(): bool;
+
+    /**
+     * @param string $content
+     */
+    public function appendContent(string $content): void;
 }
