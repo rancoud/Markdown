@@ -61,7 +61,7 @@ class Paragraph implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new \Exception('Invalid append block');
+        throw new \Exception('Invalid append block: ' . $block);
     }
 
     /**

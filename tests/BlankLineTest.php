@@ -51,4 +51,35 @@ class BlankLineTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider dataMarkdown
+     *
+     * @param string $input
+     * @param string $output
+     */
+    public function testMarkdown(string $input, string $output)
+    {
+        $m = new Markdown();
+        static::assertSame($output, $m->render($input));
+    }
+
+    public function dataMarkdown()
+    {
+        return [
+            'Example 190' => [
+                'input' => '  
+
+aaa
+  
+
+# aaa
+
+  ',
+                'output' => '<p>aaa</p>
+<h1>aaa</h1>',
+                'https://github.github.com/gfm/#example-190'
+            ]
+        ];
+    }
 }

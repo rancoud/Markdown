@@ -125,7 +125,7 @@ class Heading implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new \Exception('Invalid append block');
+        throw new \Exception('Invalid append block: ' . $block);
     }
 
     /**
@@ -177,6 +177,6 @@ class Heading implements Block
      */
     public function appendContent(string $content): void
     {
-        throw new \Exception('Invalid append content');
+        throw new \Exception('Invalid append content: ' . $content);
     }
 }

@@ -7,7 +7,9 @@ namespace Rancoud\Markdown;
 use Rancoud\Markdown\Block\BlankLine;
 use Rancoud\Markdown\Block\Block;
 use Rancoud\Markdown\Block\BlockQuote;
+use Rancoud\Markdown\Block\FencedCode;
 use Rancoud\Markdown\Block\Heading;
+use Rancoud\Markdown\Block\IndentedCode;
 use Rancoud\Markdown\Block\Paragraph;
 use Rancoud\Markdown\Block\ThematicBreak;
 use Rancoud\Markdown\Inline\Emphasis;
@@ -26,6 +28,8 @@ class Markdown
         10  => Heading::class,
         20  => ThematicBreak::class,
         30  => BlockQuote::class,
+        40  => IndentedCode::class,
+        50  => FencedCode::class,
         999 => Paragraph::class
     ];
 

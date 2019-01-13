@@ -7,29 +7,21 @@ namespace Rancoud\Markdown\Block;
 use Rancoud\Markdown\Markdown;
 
 /**
- * Class BlockQuote.
+ * Class FencedCode.
  */
-class BlockQuote implements Block
+class FencedCode implements Block
 {
     protected $parent = null;
-    protected $line;
-    protected $level;
+    protected $content = [];
 
     /**
-     * @var Block[]
-     */
-    protected $blocks = [];
-
-    /**
-     * BlockQuote constructor.
+     * FencedCode constructor.
      *
-     * @param string $line
-     * @param int    $level
+     * @param string $content
      */
-    public function __construct(string $line, int $level = 1)
+    public function __construct(string $content)
     {
-        $this->line = $line;
-        $this->level = $level;
+        $this->content[] = $content;
     }
 
     /**
@@ -37,7 +29,7 @@ class BlockQuote implements Block
      */
     public function isContainer(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -47,17 +39,12 @@ class BlockQuote implements Block
      */
     public static function isMe(string $line): ?Block
     {
-        // TODO: WRONG just for testing
-        if (strncmp('>>>', $line[0], 3) === 0) {
-            return new self(\mb_substr($line, 3), 3);
+        if (\strncmp($line, '```', 3) === 0) {
+            return new self(mb_substr($line, 4) . "\r\n");
         }
 
-        if (strncmp('>>', $line[0], 2) === 0) {
-            return new self(\mb_substr($line, 2), 2);
-        }
-
-        if (strncmp('>', $line[0], 1) === 0) {
-            return new self(\mb_substr($line, 1), 1);
+        if (\strncmp($line, '~~~', 3) === 0) {
+            return new self(mb_substr($line, 4) . "\r\n");
         }
 
         return null;
@@ -70,21 +57,20 @@ class BlockQuote implements Block
      */
     public function render(Markdown $markdown): string
     {
-        $content = '';
+        $content = \implode("\r\n", $this->content);
+        $content = htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
 
-        foreach ($this->blocks as $block) {
-            $content .= $block->render($markdown);
-        }
-
-        return '<blockquote>' . $content . '</blockquote>';
+        return '<pre><code>' . $content . '</code></pre>';
     }
 
     /**
      * @param Block $block
+     *
+     * @throws \Exception
      */
     public function appendBlock(Block $block): void
     {
-        $this->blocks[] = $block;
+        throw new \Exception('Invalid append block: ' . $block);
     }
 
     /**
@@ -92,7 +78,7 @@ class BlockQuote implements Block
      */
     public function getLine(): ?string
     {
-        return $this->line;
+        return null;
     }
 
     /**
@@ -136,6 +122,6 @@ class BlockQuote implements Block
      */
     public function appendContent(string $content): void
     {
-        throw new \Exception('Invalid append content: ' . $content);
+        $this->content[] = $content;
     }
 }
