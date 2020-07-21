@@ -6,7 +6,7 @@ namespace Rancoud\Markdown;
 
 use Rancoud\Markdown\Block\BlankLine;
 use Rancoud\Markdown\Block\Block;
-use Rancoud\Markdown\Block\BlockQuote;
+use Rancoud\Markdown\Block\Blockquote;
 use Rancoud\Markdown\Block\FencedCode;
 use Rancoud\Markdown\Block\Heading;
 use Rancoud\Markdown\Block\Html;
@@ -25,20 +25,20 @@ class Markdown
     //region Parsing Blocks and Inlines
 
     /** @var Block[] */
-    protected $blocks = [
-        0   => BlankLine::class,
-        10  => Heading::class,
-        20  => ThematicBreak::class,
-        30  => BlockQuote::class,
-        40  => IndentedCode::class,
-        50  => FencedCode::class,
-        60  => Html::class,
-        70  => LinkReferenceDefinition::class,
+    protected array $blocks = [
+        0 => BlankLine::class,
+        10 => Heading::class,
+        20 => ThematicBreak::class,
+        30 => Blockquote::class,
+        40 => IndentedCode::class,
+        50 => FencedCode::class,
+        60 => Html::class,
+        70 => LinkReferenceDefinition::class,
         999 => Paragraph::class
     ];
 
     /** @var Inline[] */
-    protected $inlines = [
+    protected array $inlines = [
         0 => Emphasis::class
     ];
 
@@ -47,16 +47,16 @@ class Markdown
     //region Outline content
 
     /** @var Block[] */
-    protected $document = [];
+    protected array $document = [];
 
     //endregion
 
     //region Treatement
 
     /** @var string[] */
-    protected $lines = [];
+    protected array $lines = [];
 
-    protected $heap = [];
+    protected array $heap = [];
 
     //endregion
 
@@ -86,12 +86,14 @@ class Markdown
      */
     protected function getLines(string $content): void
     {
+        // split lines into array
         $this->lines = \preg_split('/\R/', $content);
         $countLines = \count($this->lines);
         if ($countLines === 0) {
             return;
         }
 
+        // remove top empty lines
         for ($i = 0; $i < $countLines; ++$i) {
             if (\trim($this->lines[$i]) === '') {
                 \array_shift($this->lines);
@@ -102,11 +104,13 @@ class Markdown
             }
         }
 
+        // if empty stop process
         $countLines = \count($this->lines);
         if ($countLines === 0) {
             return;
         }
 
+        // remove bottom empty lines
         for ($i = $countLines - 1; $i > 0; --$i) {
             if (\trim($this->lines[$i]) === '') {
                 \array_pop($this->lines);
@@ -138,7 +142,8 @@ class Markdown
         if ($block === null) {
             return;
         }
-        $className = \get_class($block);
+
+        $name = $block->getName();
         $blockLastHeap = $this->lastHeap();
 
         if ($parent !== null) {
@@ -155,18 +160,16 @@ class Markdown
 
             if ($block->canClose($blockLastHeap)) {
                 $this->popHeap();
-                if (\get_class($block) === BlankLine::class && !$this->isEmptyHeap()) {
+                if ($name === 'BlankLine' && !$this->isEmptyHeap()) {
                     $this->popHeap();
                 }
             }
 
-            if ($blockLastHeap !== null) {
-                if ($className === \get_class($blockLastHeap) && $blockLastHeap->getParent() === $block) {
-                    if ($blockLastHeap->canAppend()) {
-                        $this->scanLine($block->getLine(), $this->getSameBlockLevelInHeap($block, $parent));
-                    } else {
-                        $this->popSameBlockLevelInHeap($block, $parent);
-                    }
+            if (($blockLastHeap !== null) && $name === $blockLastHeap->getName() && $blockLastHeap->getParent() === $block) {
+                if ($blockLastHeap->canAppend()) {
+                    $this->scanLine($block->getLine(), $this->getSameBlockLevelInHeap($block, $parent));
+                } else {
+                    $this->popSameBlockLevelInHeap($block, $parent);
                 }
             }
         }
@@ -178,7 +181,7 @@ class Markdown
             return;
         }
 
-        if ($blockLastHeap !== null && $className === \get_class($blockLastHeap)) {
+        if ($blockLastHeap !== null && $name === $blockLastHeap->getName()) {
             $blockLastHeap->appendContent($line);
 
             return;
@@ -195,9 +198,9 @@ class Markdown
     protected function findType(string $line): ?Block
     {
         foreach ($this->blocks as $block) {
-            $res = $block::isMe($line);
-            if ($res !== null) {
-                return $res;
+            $blockFound = $block::getBlock($line);
+            if ($blockFound !== null) {
+                return $blockFound;
             }
         }
 
@@ -223,6 +226,7 @@ class Markdown
         if ($element === false) {
             return;
         }
+
         if ($element->getParent() !== null) {
             \end($this->heap)->appendBlock($element);
         } else {
@@ -249,17 +253,16 @@ class Markdown
     }
 
     /**
-     * @param $block
-     * @param $parent
-     *
+     * @param Block $block
+     * @param Block|null $parent
      * @return mixed|null
      */
-    protected function getSameBlockLevelInHeap($block, $parent)
+    protected function getSameBlockLevelInHeap(Block $block, ?Block $parent)
     {
-        $p = ($parent === null) ? null : \get_class($parent);
+        $p = ($parent === null) ? null : $parent->getName();
         foreach ($this->heap as $bl) {
-            if (\get_class($bl) === \get_class($block)) {
-                $pp = ($bl->getParent() === null) ? null : \get_class($bl->getParent());
+            if ($bl->getName() === $block->getName()) {
+                $pp = ($bl->getParent() === null) ? null : $bl->getParent()->getName();
                 if ($p === $pp) {
                     return $bl;
                 }
@@ -275,13 +278,13 @@ class Markdown
      *
      * @return mixed
      */
-    protected function popSameBlockLevelInHeap($block, $parent)
+    protected function popSameBlockLevelInHeap(Block $block, ?Block $parent)
     {
-        $p = ($parent === null) ? null : \get_class($parent);
+        $p = ($parent === null) ? null : $parent->getName();
         $limit = null;
         foreach ($this->heap as $bl) {
-            if (\get_class($bl) === \get_class($block)) {
-                $pp = ($bl->getParent() === null) ? null : \get_class($bl->getParent());
+            if ($bl->getName() === $block->getName()) {
+                $pp = ($bl->getParent() === null) ? null : $bl->getParent()->getName();
                 if ($p === $pp) {
                     $limit = $bl;
                     break;

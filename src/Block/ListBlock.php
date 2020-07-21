@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+use Rancoud\Markdown\MarkdownException;
 
 /**
  * Class ListBlock.
@@ -14,21 +15,29 @@ class ListBlock implements Block
     protected $blocks = [];
 
     /**
+     * @param string $line
+     *
+     * @return Block|null
+     */
+    public static function getBlock(string $line): ?Block
+    {
+        return (\trim($line) === '-') ? new self() : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'ListBlock';
+    }
+
+    /**
      * @return bool
      */
     public function isContainer(): bool
     {
         return true;
-    }
-
-    /**
-     * @param string $line
-     *
-     * @return Block|null
-     */
-    public static function isMe(string $line): ?Block
-    {
-        return (\trim($line) === '-') ? new self() : null;
     }
 
     /**
@@ -43,8 +52,6 @@ class ListBlock implements Block
 
     /**
      * @param Block $block
-     *
-     * @throws \Exception
      */
     public function appendBlock(Block $block): void
     {
@@ -95,13 +102,13 @@ class ListBlock implements Block
     /**
      * @param string $content
      *
-     * @throws \Exception
+     * @throws MarkdownException
      */
     public function appendContent(string $content): void
     {
         if (\trim($content) === '') {
             return;
         }
-        throw new \Exception('Invalid append content: ' . $content);
+        throw new MarkdownException('Invalid append content: ' . $content);
     }
 }

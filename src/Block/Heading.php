@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+use Rancoud\Markdown\MarkdownException;
 
 /**
  * Class Heading.
@@ -28,19 +29,11 @@ class Heading implements Block
     }
 
     /**
-     * @return bool
-     */
-    public function isContainer(): bool
-    {
-        return false;
-    }
-
-    /**
      * @param string $line
      *
      * @return Block|null
      */
-    public static function isMe(string $line): ?Block
+    public static function getBlock(string $line): ?Block
     {
         $title = null;
         $headerLevelFound = 0;
@@ -69,6 +62,22 @@ class Heading implements Block
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'Heading';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContainer(): bool
+    {
+        return false;
     }
 
     /**
@@ -121,11 +130,11 @@ class Heading implements Block
     /**
      * @param Block $block
      *
-     * @throws \Exception
+     * @throws MarkdownException
      */
     public function appendBlock(Block $block): void
     {
-        throw new \Exception('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block);
     }
 
     /**
@@ -173,10 +182,10 @@ class Heading implements Block
     /**
      * @param string $content
      *
-     * @throws \Exception
+     * @throws MarkdownException
      */
     public function appendContent(string $content): void
     {
-        throw new \Exception('Invalid append content: ' . $content);
+        throw new MarkdownException('Invalid append content: ' . $content);
     }
 }

@@ -12,7 +12,7 @@ use Rancoud\Markdown\Markdown;
  */
 class MarkdownTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         new Markdown();
         static::assertTrue(true);
@@ -22,7 +22,7 @@ class MarkdownTest extends TestCase
      * @dataProvider data
      * @param $filename
      */
-    public function testRender($filename)
+    public function testRender($filename): void
     {
         $dirpath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
 
@@ -34,7 +34,7 @@ class MarkdownTest extends TestCase
         static::assertSame($output, $markdown->render($input));
     }
 
-    public function data()
+    public function data(): array
     {
         $data = [];
 

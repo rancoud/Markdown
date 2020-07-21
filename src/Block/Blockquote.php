@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+use Rancoud\Markdown\MarkdownException;
 
 /**
  * Class BlockQuote.
  */
-class BlockQuote implements Block
+class Blockquote implements Block
 {
     protected $parent = null;
     protected $line;
@@ -33,19 +34,11 @@ class BlockQuote implements Block
     }
 
     /**
-     * @return bool
-     */
-    public function isContainer(): bool
-    {
-        return true;
-    }
-
-    /**
      * @param string $line
      *
      * @return Block|null
      */
-    public static function isMe(string $line): ?Block
+    public static function getBlock(string $line): ?Block
     {
         // TODO: WRONG just for testing
         if (\strncmp('>>>', $line[0], 3) === 0) {
@@ -61,6 +54,22 @@ class BlockQuote implements Block
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'Blockquote';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContainer(): bool
+    {
+        return true;
     }
 
     /**
@@ -132,10 +141,10 @@ class BlockQuote implements Block
     /**
      * @param string $content
      *
-     * @throws \Exception
+     * @throws MarkdownException
      */
     public function appendContent(string $content): void
     {
-        throw new \Exception('Invalid append content: ' . $content);
+        throw new MarkdownException('Invalid append content: ' . $content);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+use Rancoud\Markdown\MarkdownException;
 
 /**
  * Class Table.
@@ -25,25 +26,33 @@ class Table implements Block
     }
 
     /**
-     * @return bool
-     */
-    public function isContainer(): bool
-    {
-        return false;
-    }
-
-    /**
      * @param string $line
      *
      * @return Block|null
      */
-    public static function isMe(string $line): ?Block
+    public static function getBlock(string $line): ?Block
     {
         if (\strncmp($line, '|', 1) === 0) {
             return new self($line);
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'Table';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContainer(): bool
+    {
+        return false;
     }
 
     /**
@@ -61,11 +70,11 @@ class Table implements Block
     /**
      * @param Block $block
      *
-     * @throws \Exception
+     * @throws MarkdownException
      */
     public function appendBlock(Block $block): void
     {
-        throw new \Exception('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block);
     }
 
     /**
@@ -112,8 +121,6 @@ class Table implements Block
 
     /**
      * @param string $content
-     *
-     * @throws \Exception
      */
     public function appendContent(string $content): void
     {

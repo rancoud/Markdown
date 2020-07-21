@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+use Rancoud\Markdown\MarkdownException;
 
 /**
  * Class FencedCode.
@@ -25,19 +26,11 @@ class FencedCode implements Block
     }
 
     /**
-     * @return bool
-     */
-    public function isContainer(): bool
-    {
-        return false;
-    }
-
-    /**
      * @param string $line
      *
      * @return Block|null
      */
-    public static function isMe(string $line): ?Block
+    public static function getBlock(string $line): ?Block
     {
         if (\strncmp($line, '```', 3) === 0) {
             return new self(\mb_substr($line, 4) . "\r\n");
@@ -48,6 +41,22 @@ class FencedCode implements Block
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'FencedCode';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContainer(): bool
+    {
+        return false;
     }
 
     /**
@@ -66,11 +75,11 @@ class FencedCode implements Block
     /**
      * @param Block $block
      *
-     * @throws \Exception
+     * @throws MarkdownException
      */
     public function appendBlock(Block $block): void
     {
-        throw new \Exception('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block);
     }
 
     /**
@@ -117,8 +126,6 @@ class FencedCode implements Block
 
     /**
      * @param string $content
-     *
-     * @throws \Exception
      */
     public function appendContent(string $content): void
     {

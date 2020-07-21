@@ -20,15 +20,15 @@ class ThematicBreakTest extends TestCase
      * @param string|null $output
      * @param string|null $render
      */
-    public function testIsMe(string $input, ?string $output, ?string $render)
+    public function testGetBlock(string $input, ?string $output, ?string $render): void
     {
         $m = new Markdown();
-        $out = ThematicBreak::isMe($input);
+        $out = ThematicBreak::getBlock($input);
 
         if ($output === null) {
-            static::assertNull($output, $out);
+            static::assertNull($out);
         } else {
-            static::assertEquals($output, get_class($out));
+            static::assertEquals($output, $out->getName());
         }
 
         if ($render !== null) {
@@ -36,24 +36,24 @@ class ThematicBreakTest extends TestCase
         }
     }
 
-    public function data()
+    public function data(): array
     {
         return [
             'correct ***' => [
                 'input' => '***',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-13'
             ],
             'correct ---' => [
                 'input' => '---',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-13'
             ],
             'correct ___' => [
                 'input' => '___',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-13'
             ],
@@ -89,19 +89,19 @@ class ThematicBreakTest extends TestCase
             ],
             'one spaces indent allowed' => [
                 'input' => ' ***',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-17'
             ],
             'two spaces indent allowed' => [
                 'input' => '  ***',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-18'
             ],
             'three spaces indent allowed' => [
                 'input' => '   ***',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-18'
             ],
@@ -112,31 +112,31 @@ class ThematicBreakTest extends TestCase
             ],
             'more than three characters may be used' => [
                 'input' => '_____________________________________',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-20'
             ],
             'spaces allowed between characters #1' => [
                 'input' => ' - - -',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-21'
             ],
             'spaces allowed between characters #2' => [
                 'input' => ' **  * ** * ** * **',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-22'
             ],
             'spaces allowed between characters #3' => [
                 'input' => '-     -      -      -',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-23'
             ],
             'spaces allowed at the end' => [
                 'input' => '- - - -    ',
-                'output' => ThematicBreak::class,
+                'output' => 'ThematicBreak',
                 'render' => '<hr />',
                 'https://github.github.com/gfm/#example-24'
             ],
@@ -167,13 +167,13 @@ class ThematicBreakTest extends TestCase
      * @param string $input
      * @param string $output
      */
-    public function testMarkdown(string $input, string $output)
+    public function testMarkdown(string $input, string $output): void
     {
         $m = new Markdown();
         static::assertSame($output, $m->render($input));
     }
 
-    public function dataMarkdown()
+    public function dataMarkdown(): array
     {
         return [
             'Example 13' => [

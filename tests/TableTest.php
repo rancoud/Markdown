@@ -20,13 +20,13 @@ class TableTest extends TestCase
      * @param string|null $output
      * @param string|null $render
      */
-    public function testIsMe(string $input, ?string $output, ?string $render)
+    public function testGetBlock(string $input, ?string $output, ?string $render): void
     {
         $m = new Markdown();
-        $out = Table::isMe($input);
+        $out = Table::getBlock($input);
 
         if ($output === null) {
-            static::assertNull($output, $out);
+            static::assertNull($out);
         } else {
             static::assertEquals($output, get_class($out));
         }
@@ -36,7 +36,7 @@ class TableTest extends TestCase
         }
     }
 
-    public function data()
+    public function data(): array
     {
         return [
             'table' => [
@@ -53,13 +53,13 @@ class TableTest extends TestCase
      * @param string $input
      * @param string $output
      */
-    public function testMarkdown(string $input, string $output)
+    public function testMarkdown(string $input, string $output): void
     {
         $m = new Markdown();
         static::assertSame($output, $m->render($input));
     }
 
-    public function dataMarkdown()
+    public function dataMarkdown(): array
     {
         return [
             'Example 191' => [

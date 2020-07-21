@@ -18,13 +18,13 @@ class ListBlockTest extends TestCase
      * @param string $input
      * @param string $output
      */
-    public function testMarkdown(string $input, string $output)
+    public function testMarkdown(string $input, string $output): void
     {
         $m = new Markdown();
         static::assertSame($output, $m->render($input));
     }
 
-    public function dataMarkdown()
+    public function dataMarkdown(): array
     {
         return [
             'Example 224' => [

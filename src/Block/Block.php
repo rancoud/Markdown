@@ -12,16 +12,21 @@ use Rancoud\Markdown\Markdown;
 interface Block
 {
     /**
-     * @return bool
-     */
-    public function isContainer(): bool;
-
-    /**
      * @param string $line
      *
      * @return Block|null
      */
-    public static function isMe(string $line): ?self;
+    public static function getBlock(string $line): ?self;
+
+    /**
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
+     * @return bool
+     */
+    public function isContainer(): bool;
 
     /**
      * @param Markdown $markdown

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Markdown\Block;
 
 use Rancoud\Markdown\Markdown;
+use Rancoud\Markdown\MarkdownException;
 
 /**
  * Class Paragraph.
@@ -25,21 +26,29 @@ class Paragraph implements Block
     }
 
     /**
+     * @param string $line
+     *
+     * @return Block|null
+     */
+    public static function getBlock(string $line): ?Block
+    {
+        return new self($line);
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'Paragraph';
+    }
+
+    /**
      * @return bool
      */
     public function isContainer(): bool
     {
         return false;
-    }
-
-    /**
-     * @param string $line
-     *
-     * @return Block|null
-     */
-    public static function isMe(string $line): ?Block
-    {
-        return new self($line);
     }
 
     /**
@@ -57,11 +66,11 @@ class Paragraph implements Block
     /**
      * @param Block $block
      *
-     * @throws \Exception
+     * @throws MarkdownException
      */
     public function appendBlock(Block $block): void
     {
-        throw new \Exception('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block);
     }
 
     /**
@@ -108,8 +117,6 @@ class Paragraph implements Block
 
     /**
      * @param string $content
-     *
-     * @throws \Exception
      */
     public function appendContent(string $content): void
     {
