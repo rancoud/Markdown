@@ -55,7 +55,7 @@ class BlankLine implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new MarkdownException('Invalid append block ' . $block);
+        throw new MarkdownException('Invalid append block ' . $block->getName());
     }
 
     /**

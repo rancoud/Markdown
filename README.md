@@ -29,3 +29,8 @@ echo $m->render('*my content*');
 `composer ci` for php-cs-fixer and phpunit and coverage  
 `composer lint` for php-cs-fixer  
 `composer test` for phpunit and coverage
+
+## TODO
+- [ ] test only one block rendering
+- [ ] list all github examples in order
+- [ ] merge tests inside one big file?

@@ -12,9 +12,9 @@ use Rancoud\Markdown\MarkdownException;
  */
 class Heading implements Block
 {
-    protected $parent = null;
-    protected $headerLevel = 0;
-    protected $title = '';
+    protected ?Block $parent = null;
+    protected int $headerLevel = 0;
+    protected string $title = '';
 
     /**
      * Heading constructor.
@@ -50,7 +50,9 @@ class Heading implements Block
                 $title = \mb_substr($line, $headerLevel + 1);
                 $headerLevelFound = $headerLevel;
                 break;
-            } elseif ($headerSigns === $line) {
+            }
+
+            if ($headerSigns === $line) {
                 return new self($headerLevel, '');
             }
         }
@@ -134,7 +136,7 @@ class Heading implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new MarkdownException('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block->getName());
     }
 
     /**

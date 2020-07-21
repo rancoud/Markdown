@@ -12,14 +12,14 @@ use Rancoud\Markdown\MarkdownException;
  */
 class Blockquote implements Block
 {
-    protected $parent = null;
-    protected $line;
-    protected $level;
+    protected ?Block $parent = null;
+    protected string $line;
+    protected int $level;
 
     /**
      * @var Block[]
      */
-    protected $blocks = [];
+    protected array $blocks = [];
 
     /**
      * BlockQuote constructor.

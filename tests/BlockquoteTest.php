@@ -8,9 +8,9 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Markdown;
 
 /**
- * Class BlockQuoteTest
+ * Class BlockquoteTest
  */
-class BlockQuoteTest extends TestCase
+class BlockquoteTest extends TestCase
 {
     /**
      * @dataProvider dataMarkdown

@@ -63,7 +63,7 @@ class BlankLineTest extends TestCase
         $m = new Markdown();
         static::assertSame($output, $m->render($input));
     }
- 
+
     public function dataMarkdown(): array
     {
         return [
@@ -78,7 +78,7 @@ aaa
   ',
                 'output' => '<p>aaa</p>
 <h1>aaa</h1>',
-                'https://github.github.com/gfm/#example-190'
+                'https://github.github.com/gfm/#example-197'
             ]
         ];
     }

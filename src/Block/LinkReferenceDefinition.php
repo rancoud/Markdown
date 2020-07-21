@@ -12,8 +12,8 @@ use Rancoud\Markdown\MarkdownException;
  */
 class LinkReferenceDefinition implements Block
 {
-    protected $parent = null;
-    protected $content = [];
+    protected ?Block $parent = null;
+    protected array $content = [];
 
     /**
      * Html constructor.
@@ -62,7 +62,7 @@ class LinkReferenceDefinition implements Block
      */
     public function render(Markdown $markdown): string
     {
-        return \implode("\r\n", $this->content);
+        return \implode("\n", $this->content);
     }
 
     /**
@@ -72,7 +72,7 @@ class LinkReferenceDefinition implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new MarkdownException('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block->getName());
     }
 
     /**

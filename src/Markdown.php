@@ -165,7 +165,7 @@ class Markdown
                 }
             }
 
-            if (($blockLastHeap !== null) && $name === $blockLastHeap->getName() && $blockLastHeap->getParent() === $block) {
+            if (/*($blockLastHeap !== null) &&*/ $name === $blockLastHeap->getName() && $blockLastHeap->getParent() === $block) {
                 if ($blockLastHeap->canAppend()) {
                     $this->scanLine($block->getLine(), $this->getSameBlockLevelInHeap($block, $parent));
                 } else {
@@ -316,10 +316,14 @@ class Markdown
         $content = [];
 
         foreach ($this->document as $block) {
+            if ($block->getName() === 'BlankLine') {
+                continue;
+            }
+
             $content[] = $block->render($this);
         }
 
-        return \implode("\r\n", $content);
+        return \implode("\n", $content);
     }
 
     /**

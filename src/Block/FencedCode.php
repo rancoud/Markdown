@@ -12,8 +12,8 @@ use Rancoud\Markdown\MarkdownException;
  */
 class FencedCode implements Block
 {
-    protected $parent = null;
-    protected $content = [];
+    protected ?Block $parent = null;
+    protected array $content = [];
 
     /**
      * FencedCode constructor.
@@ -33,11 +33,11 @@ class FencedCode implements Block
     public static function getBlock(string $line): ?Block
     {
         if (\strncmp($line, '```', 3) === 0) {
-            return new self(\mb_substr($line, 4) . "\r\n");
+            return new self(\mb_substr($line, 4) . "\n");
         }
 
         if (\strncmp($line, '~~~', 3) === 0) {
-            return new self(\mb_substr($line, 4) . "\r\n");
+            return new self(\mb_substr($line, 4) . "\n");
         }
 
         return null;
@@ -66,7 +66,7 @@ class FencedCode implements Block
      */
     public function render(Markdown $markdown): string
     {
-        $content = \implode("\r\n", $this->content);
+        $content = \implode("\n", $this->content);
         $content = \htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
 
         return '<pre><code>' . $content . '</code></pre>';
@@ -79,7 +79,7 @@ class FencedCode implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new MarkdownException('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block->getName());
     }
 
     /**

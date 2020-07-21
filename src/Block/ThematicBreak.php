@@ -12,9 +12,9 @@ use Rancoud\Markdown\MarkdownException;
  */
 class ThematicBreak implements Block
 {
-    protected $parent = null;
-    protected static $authorizedCharacters = ['*', '-', '_'];
-    protected $charactersUsed = null;
+    protected ?Block $parent = null;
+    protected static array $authorizedCharacters = ['*', '-', '_'];
+    protected ?string $charactersUsed = null;
 
     /**
      * ThematicBreak constructor.
@@ -91,7 +91,7 @@ class ThematicBreak implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new MarkdownException('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block->getName());
     }
 
     /**

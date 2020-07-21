@@ -12,7 +12,7 @@ use Rancoud\Markdown\MarkdownException;
  */
 class ListBlock implements Block
 {
-    protected $blocks = [];
+    protected array $blocks = [];
 
     /**
      * @param string $line

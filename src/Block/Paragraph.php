@@ -12,8 +12,8 @@ use Rancoud\Markdown\MarkdownException;
  */
 class Paragraph implements Block
 {
-    protected $parent = null;
-    protected $content = [];
+    protected ?Block $parent = null;
+    protected array $content = [];
 
     /**
      * Paragraph constructor.
@@ -58,7 +58,7 @@ class Paragraph implements Block
      */
     public function render(Markdown $markdown): string
     {
-        $content = $markdown->renderInline(\implode("\r\n", $this->content));
+        $content = $markdown->renderInline(\implode("\n", $this->content));
 
         return '<p>' . $content . '</p>';
     }
@@ -70,7 +70,7 @@ class Paragraph implements Block
      */
     public function appendBlock(Block $block): void
     {
-        throw new MarkdownException('Invalid append block: ' . $block);
+        throw new MarkdownException('Invalid append block: ' . $block->getName());
     }
 
     /**
