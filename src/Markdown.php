@@ -26,14 +26,14 @@ class Markdown
 
     /** @var Block[] */
     protected array $blocks = [
-        0 => BlankLine::class,
-        10 => Heading::class,
-        20 => ThematicBreak::class,
-        30 => Blockquote::class,
-        40 => IndentedCode::class,
-        50 => FencedCode::class,
-        60 => Html::class,
-        70 => LinkReferenceDefinition::class,
+        0   => BlankLine::class,
+        10  => Heading::class,
+        20  => ThematicBreak::class,
+        30  => Blockquote::class,
+        40  => IndentedCode::class,
+        50  => FencedCode::class,
+        60  => Html::class,
+        70  => LinkReferenceDefinition::class,
         999 => Paragraph::class
     ];
 
@@ -165,7 +165,7 @@ class Markdown
                 }
             }
 
-            if (/*($blockLastHeap !== null) &&*/ $name === $blockLastHeap->getName() && $blockLastHeap->getParent() === $block) {
+            if ($name === $blockLastHeap->getName() && $blockLastHeap->getParent() === $block) {
                 if ($blockLastHeap->canAppend()) {
                     $this->scanLine($block->getLine(), $this->getSameBlockLevelInHeap($block, $parent));
                 } else {
@@ -228,7 +228,10 @@ class Markdown
         }
 
         if ($element->getParent() !== null) {
-            \end($this->heap)->appendBlock($element);
+            $ret = \end($this->heap);
+            if ($ret !== false) {
+                $ret->appendBlock($element);
+            }
         } else {
             $this->document[] = $element;
         }
@@ -253,8 +256,9 @@ class Markdown
     }
 
     /**
-     * @param Block $block
+     * @param Block      $block
      * @param Block|null $parent
+     *
      * @return mixed|null
      */
     protected function getSameBlockLevelInHeap(Block $block, ?Block $parent)
