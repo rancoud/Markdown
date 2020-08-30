@@ -24,6 +24,10 @@ echo $m->render('*my content*');
 ## Markdown Methods
 ### General Commands  
 * render(content: string):string
+* addInlines(inlines: string):void
+* removeInlines(inlines: string):void
+* addBlocks(blocks: string):void
+* removeBlocks(blocks: string):void
 
 ## How to Dev
 `composer ci` for php-cs-fixer and phpunit and coverage  
@@ -32,5 +36,4 @@ echo $m->render('*my content*');
 
 ## TODO
 - [ ] test only one block rendering
-- [ ] list all github examples in order
-- [ ] merge tests inside one big file?
+- [X] list all github examples in order

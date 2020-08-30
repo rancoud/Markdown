@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\Table;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class TableTest
- */
 class TableTest extends TestCase
 {
     /**

@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\FencedCode;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class FencedCodeTest
- */
 class FencedCodeTest extends TestCase
 {
     /**

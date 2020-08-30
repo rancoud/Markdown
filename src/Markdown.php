@@ -77,6 +77,26 @@ class Markdown
         return $this->renderDocument();
     }
 
+    public function addInlines(string ...$inlines): void
+    {
+        $inlines[] = $inlines;
+    }
+
+    public function removeInlines(string ...$inlines): void
+    {
+        $inlines[] = $inlines;
+    }
+
+    public function addBlocks(string ...$blocks): void
+    {
+        $blocks[] = $blocks;
+    }
+
+    public function removeBlocks(string ...$blocks): void
+    {
+        $blocks[] = $blocks;
+    }
+
     //endregion
 
     // region Scan content

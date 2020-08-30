@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\BlankLine;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class BlankLineTest
- */
 class BlankLineTest extends TestCase
 {
     /**

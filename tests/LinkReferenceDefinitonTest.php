@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\LinkReferenceDefinition;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class LinkReferenceDefinitonTest
- */
 class LinkReferenceDefinitonTest extends TestCase
 {
     /**

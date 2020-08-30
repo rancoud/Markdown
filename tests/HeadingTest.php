@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\Heading;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class HeadingTest
- */
 class HeadingTest extends TestCase
 {
     /**

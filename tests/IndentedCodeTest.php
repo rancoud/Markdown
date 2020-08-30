@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\IndentedCode;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class IndentedCodeTest
- */
 class IndentedCodeTest extends TestCase
 {
     /**

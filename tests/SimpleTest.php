@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\ThematicBreak;
 use Rancoud\Markdown\Markdown;
 
-class ThematicBreakTest extends TestCase
+class SimpleTest extends TestCase
 {
     /**
      * @dataProvider data

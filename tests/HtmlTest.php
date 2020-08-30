@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\Html;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class HtmlTest
- */
 class HtmlTest extends TestCase
 {
     /**

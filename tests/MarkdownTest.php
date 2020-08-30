@@ -7,9 +7,6 @@ namespace Rancoud\Markdown\Test;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class MarkdownTest.
- */
 class MarkdownTest extends TestCase
 {
     public function testConstruct(): void

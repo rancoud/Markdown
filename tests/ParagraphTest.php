@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Markdown\Block\Paragraph;
 use Rancoud\Markdown\Markdown;
 
-/**
- * Class ParagraphTest
- */
 class ParagraphTest extends TestCase
 {
     /**
